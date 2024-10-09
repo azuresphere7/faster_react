@@ -5,7 +5,7 @@ import {
   Server,
   serveStatic,
 } from "faster";
-import { BackendComponent } from "@helpers/backend/types.ts";
+import type { BackendComponent } from "@helpers/backend/types.ts";
 import { walk } from "walk";
 import * as path from "path";
 import { getStream } from "./core/page.tsx";
@@ -14,14 +14,16 @@ import { denoPlugins } from "esbuild-deno-loader";
 import FrameworkErrorPage from "./core/error_page.tsx";
 import * as b64 from "b64";
 import { DenoKvFs } from "deno_kv_fs";
+import type { ComponentType } from "react";
 
 interface ErrorProps {
   dev: boolean;
   msg: string;
   stack: string;
+  [key: string]: unknown;
 }
 
-function windowsPathFixer(): any {
+function windowsPathFixer() {
   return {
     name: "fix-windows",
     setup(build: any) {
@@ -40,7 +42,6 @@ function windowsPathFixer(): any {
 }
 
 class Builder {
-  //@ts-ignore
   server: Server = new Server();
   options: any;
   denoJson: any;
@@ -49,13 +50,12 @@ class Builder {
   encoder = new TextEncoder();
   decoder = new TextDecoder();
   backendComponents: { [key: string]: BackendComponent } = {};
-  frontendComponents: { [key: string]: Function } = {};
+  frontendComponents: { [key: string]: ComponentType } = {};
   registeredRoutes: { [key: string]: Function } = {};
   cache: { [key: string]: Uint8Array } = {};
   esbuild: any = null;
   isServerless: boolean = false;
   isInDenoDeploy: boolean = false;
-  //@ts-ignore
   constructor(options: any, denoJson: any) {
     this.options = options;
     this.denoJson = denoJson;
@@ -180,8 +180,7 @@ class Builder {
         return await getStream(
           props,
           this.options.framework,
-          this
-            .frontendComponents[pageOrComponentFile],
+          this.frontendComponents[pageOrComponentFile],
         );
       } else if (type == "component") {
         return await getComponentStream(
@@ -194,10 +193,10 @@ class Builder {
       return await this.getErrorPage(e, type);
     }
   }
-  async getErrorPage(e: any, type: "page" | "component") {
+  async getErrorPage(e: ErrorProps, type: "page" | "component") {
     const errorProps: ErrorProps = {
       dev: this.options.framework.dev,
-      msg: (e.message || JSON.stringify(e)),
+      msg: (e.message || JSON.stringify(e)) as string,
       stack: e.stack,
     };
     if (type == "page") {
@@ -507,12 +506,10 @@ class Builder {
             )).default;
           }
           componentsNames.push(this.frontendComponents[fixedPath].name);
-          allImports += `import ${
-            this.frontendComponents[fixedPath].name
-          } from "${path.toFileUrl(path.join(this.path, f))}";\n`;
-          allImports += `components['${
-            this.frontendComponents[fixedPath].name
-          }'] = ${this.frontendComponents[fixedPath].name};\n`;
+          allImports += `import ${this.frontendComponents[fixedPath].name
+            } from "${path.toFileUrl(path.join(this.path, f))}";\n`;
+          allImports += `components['${this.frontendComponents[fixedPath].name
+            }'] = ${this.frontendComponents[fixedPath].name};\n`;
         } catch (e) {
           console.error(`Error load ${fixedPath}`);
           console.log(e);
@@ -690,5 +687,5 @@ const denoJson: any = (await import("./deno.json", {
 })).default;
 
 const builder = new Builder(options, denoJson);
-const server = builder.server;
+const { server } = builder;
 export { options, server };

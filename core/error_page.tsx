@@ -1,6 +1,13 @@
 import { Component } from "react";
 
-export default class FrameworkErrorPage extends Component {
+interface FrameworkErrorPageProps {
+  msg: string;
+  stack: string;
+  [key: string]: unknown;
+}
+
+export default class FrameworkErrorPage
+  extends Component<FrameworkErrorPageProps> {
   override render() {
     return (
       <>
@@ -8,11 +15,11 @@ export default class FrameworkErrorPage extends Component {
         <ul>
           <li>
             <strong>Error:</strong>
-            {(this.props as any).msg}
+            {this.props.msg}
           </li>
           <li>
             <strong>Stack:</strong>
-            {(this.props as any).stack}
+            {this.props.stack}
           </li>
         </ul>
       </>

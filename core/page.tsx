@@ -1,5 +1,22 @@
 import { renderToReadableStream } from "react-dom/server";
-function Page({ frameworkProps, page }: any) {
+import type { ComponentType } from "react";
+
+interface FrameworkProps {
+  title: string;
+  dev?: boolean;
+  [key: string]: unknown;
+}
+
+interface ComponentProps {
+  [key: string]: unknown;
+}
+
+function Page(
+  { frameworkProps, page }: {
+    frameworkProps: FrameworkProps;
+    page: JSX.Element;
+  },
+) {
   return (
     <html>
       <head>
@@ -18,9 +35,9 @@ function Page({ frameworkProps, page }: any) {
 }
 
 export async function getStream(
-  props: Record<any, any>,
-  frameworkProps: Record<any, any>,
-  Pagetsx: any,
+  props: ComponentProps,
+  frameworkProps: FrameworkProps,
+  Pagetsx: ComponentType<any>,
 ) {
   return await renderToReadableStream(
     <Page

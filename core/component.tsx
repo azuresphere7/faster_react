@@ -1,10 +1,15 @@
 import { renderToReadableStream } from "react-dom/server";
 
+interface ComponentProps {
+  [key: string]: unknown;
+}
+
 export async function getComponentStream(
-  props: Record<any, any>,
+  props: ComponentProps,
   Componentsx: any,
 ) {
-  const id = "c" + crypto.randomUUID(); //fix document.querySelector with "c" +
+  const id = "c" + crypto.randomUUID();
+
   return await renderToReadableStream(
     <div id={id} className={`react-component ${Componentsx.name}`}>
       <Componentsx {...props} />

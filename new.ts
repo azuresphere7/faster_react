@@ -17,7 +17,7 @@ if (isCloned) {
   const command = new Deno.Command("git", {
     args: ["clone", source, folderName],
   });
-  const { success, stdout } = await command.output();
+  const { success } = await command.output();
   if (!success) {
     console.log(commandHelp);
     throw new Error(

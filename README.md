@@ -1,9 +1,4 @@
-# 🚀 **faster_react**
-
-> [!IMPORTANT]\
-> **Please give a star!** ⭐
-
----
+# 🚀 **Faster + React**
 
 ## 🌟 Introduction
 
@@ -94,7 +89,7 @@ git ls-files | xargs wc -l
 # Output: 104132 (version 1.7.1)
 
 # faster_react
-git clone https://github.com/hviana/faster_react.git
+git clone https://github.com/azuresphere7/faster_react.git
 cd faster_react
 git ls-files | xargs wc -l
 # Output: 1037 (version 13.6)
@@ -114,7 +109,7 @@ defining API routes in the backend.
 - The **Middleware Design Pattern** offers a practical and straightforward
   method for defining API routes.
 
-![Architecture Diagram](https://raw.githubusercontent.com/hviana/faster_react/refs/heads/main/docs/graph.svg)
+![Architecture Diagram](./docs/graph.svg)
 
 ---
 
@@ -466,18 +461,3 @@ Computing_ (SAC '22). Association for Computing Machinery, New York, NY, USA,
 <a id="2">[2]</a> Brown, Ethan. _Web Development with Node and Express:
 Leveraging the JavaScript Stack_. O'Reilly Media, 2019. URL:
 [http://www.oreilly.com/catalog/9781492053484](http://www.oreilly.com/catalog/9781492053484)
-
----
-
-## 👨‍💻 **About**
-
-**Author:** Henrique Emanoel Viana, a Brazilian computer scientist and web
-technology enthusiast.
-
-- 📞 **Phone:** +55 (41) 99999-4664
-- 🌐 **Website:**
-  [https://sites.google.com/view/henriqueviana](https://sites.google.com/view/henriqueviana)
-
-> **Improvements and suggestions are welcome!**
-
----
