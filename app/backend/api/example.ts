@@ -7,17 +7,17 @@ You need to have a default export with the function (which can be asynchronous).
 This function has as input parameter an instance of Server of faster.
 You can do your backend manipulations here. For example, getting data from the database. Including asynchronous calls.
 Define your custom api routes. For help, see: https://github.com/hviana/faster */
-import { type Context, type NextFunc, req, res, Server } from "faster";
+import { type Context, type NextFunc, type Server, req, res } from "faster";
 import { userValidations } from "../files/general.ts";
 
-export default async function example(server: Server) {
+export default function example(server: Server) {
   const prepend = example.name;
   server.post(
     `${prepend}/json`,
     res("json"),
     req("json"),
     async (ctx: Context, next: NextFunc) => {
-      if (!(await userValidations(ctx))) {
+      if (!(userValidations())) {
         throw new Error("Access Forbidden");
       }
       console.log(ctx.body); //request json

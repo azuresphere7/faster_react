@@ -13,16 +13,16 @@ However, if you want the page to be processed, do not consume the body of ctx.re
 The after function has as input parameter the props that will be passed to the component. Here you can add backend data to these props, such as data from a database.
  is possible to use an asynchronous function as a parameter. */
 
-import { type BackendComponent } from "@helpers/backend/types.ts";
-import { type Context, type NextFunc } from "faster";
-export default <BackendComponent> {
+import type { BackendComponent } from "@helpers/backend/types.ts";
+import type { Context, NextFunc } from "faster";
+export default <BackendComponent>{
   before: [
-    async (ctx: Context, next: NextFunc) => {
+    async (_: Context, next: NextFunc) => {
       console.log("Call index before middleware");
       await next(); //Calling await next(); is important to continue the flow of execution (or not, if you want to interrupt).
     },
   ],
-  after: async (props) => { //Add properties to the component here. You can pass data from the backend, like from a database, etc.
+  after: (props) => { //Add properties to the component here. You can pass data from the backend, like from a database, etc.
     props["example"] = "props example";
   },
 };
