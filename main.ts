@@ -118,7 +118,7 @@ class Builder {
     await this.buildCSS();
   }
   getFixedPath(frameworkFile: string) {
-    return frameworkFile.replaceAll(path.SEPARATOR, "/"); //stardardize paths
+    return frameworkFile.replaceAll(path.SEPARATOR, "/"); //standardize paths
   }
   frontendComponentFile(urlParam: string) {
     return `app/frontend/components/${urlParam}.tsx`;
@@ -221,28 +221,19 @@ class Builder {
     }
   }
   watchHRM() {
-    addEventListener("hmr", async (e) => {
-      //@ts-ignore
-      const path = e.detail.path;
-      if (
-        path.includes("/backend/api")
-      ) {
+    addEventListener("hmr", async (e: any) => {
+      const { path } = e.detail;
+
+      if (path.includes("/backend/api")) {
         await this.registerCustomRouters();
       }
-      if (
-        path.includes("/backend/components")
-      ) {
+      if (path.includes("/backend/components")) {
         await this.registerBackendComponents();
       }
-      if (
-        path.includes("/frontend/css")
-      ) {
+      if (path.includes("/frontend/css")) {
         await this.buildCSS();
       }
-      if (
-        path.includes("/frontend/components") ||
-        path.includes("/frontend/files")
-      ) {
+      if (path.includes("/frontend/components") || path.includes("/frontend/files")) {
         await this.buildfrontendComponents();
       }
       this.refresh();
@@ -435,14 +426,12 @@ class Builder {
             this.backendComponents[fixedPath] = (await import(
               `./${fixedPath}`
             )).default;
-            if (this.backendComponents[fixedPath].before) {
-              if (this.backendComponents[fixedPath].before.length > 0) {
-                this.backendComponents[fixedPath].before.push(
-                  async (ctx: Context, next: NextFunc) => {
-                    ctx.extra.finishedFasterReactPageMiddlewares = true;
-                  },
-                );
-              }
+            if (this.backendComponents[fixedPath].before && this.backendComponents[fixedPath].before.length > 0) {
+              this.backendComponents[fixedPath].before.push(
+                (ctx: Context, _) => {
+                  ctx.extra.finishedFasterReactPageMiddlewares = true;
+                },
+              );
             }
           }
         } catch (e) {
@@ -464,7 +453,7 @@ class Builder {
   async getBuildVersion(files: any[]) {
     let version = "";
     for (const f of files) {
-      const mtime = (await Deno.stat(f)).mtime;
+      const { mtime } = (await Deno.stat(f));
       let time: number = Date.now();
       if (mtime) {
         time = mtime.getTime();
@@ -524,12 +513,12 @@ class Builder {
       let version = "";
       if (Server.kvFs) {
         version = await this.getBuildVersion([...files, ...scriptFiles]);
-        const versionFile = await Server.kvFs.read({
+        const versionFile: any = await Server.kvFs.read({
           path: ["build", "js_version"],
         });
-        const jsFile = await Server.kvFs.read({ path: ["build", "app.js"] });
+        const jsFile: any = await Server.kvFs.read({ path: ["build", "app.js"] });
         if (versionFile && jsFile) {
-          const existingVersion = this.decoder.decode( //@ts-ignore
+          const existingVersion = this.decoder.decode(
             await DenoKvFs.readStream(versionFile.content),
           );
           if (existingVersion == version) {
@@ -537,7 +526,7 @@ class Builder {
           }
         }
         if (!needsCompile) {
-          this.cache["app.js"] = await DenoKvFs.readStream( //@ts-ignore
+          this.cache["app.js"] = await DenoKvFs.readStream(
             jsFile.content,
           );
           console.log("Loaded frontend resources");
@@ -560,7 +549,7 @@ class Builder {
         jsxDev: this.options.framework.dev,
         bundle: true,
         treeShaking: true,
-        minify: this.options.framework.dev ? false : true,
+        minify: !this.options.framework.dev,
         absWorkingDir: this.path,
         jsx: "automatic",
         platform: "browser",
@@ -595,12 +584,12 @@ class Builder {
       let version = "";
       if (Server.kvFs) {
         version = await this.getBuildVersion(cssFiles);
-        const versionFile = await Server.kvFs.read({
+        const versionFile: any = await Server.kvFs.read({
           path: ["build", "css_version"],
         });
-        const cssFile = await Server.kvFs.read({ path: ["build", "app.css"] });
+        const cssFile: any = await Server.kvFs.read({ path: ["build", "app.css"] });
         if (versionFile && cssFile) {
-          const existingVersion = this.decoder.decode( //@ts-ignore
+          const existingVersion = this.decoder.decode(
             await DenoKvFs.readStream(versionFile.content),
           );
           if (existingVersion == version) {
@@ -608,9 +597,7 @@ class Builder {
           }
         }
         if (!needsCompile) {
-          this.cache["app.css"] = await DenoKvFs.readStream( //@ts-ignore
-            cssFile.content,
-          );
+          this.cache["app.css"] = await DenoKvFs.readStream(cssFile.content,);
           console.log("Loaded frontend CSS files.");
           return;
         }
@@ -642,7 +629,7 @@ class Builder {
           },
           bundle: true,
           treeShaking: true,
-          minify: this.options.framework.dev ? false : true,
+          minify: !this.options.framework.dev,
           absWorkingDir: this.path,
           platform: "browser",
           charset: "utf8",
@@ -668,7 +655,7 @@ class Builder {
 
   refresh() {
     if (this.options.framework.dev) {
-      for (const [soketId, socket] of this.server.openedSockets) {
+      for (const [_, socket] of this.server.openedSockets) {
         try {
           socket.send("refresh");
         } catch {
@@ -679,10 +666,11 @@ class Builder {
   }
 }
 
-const options: any = (await import("./options.json", {
+const options = (await import("./options.json", {
   with: { type: "json" },
 })).default;
-const denoJson: any = (await import("./deno.json", {
+
+const denoJson = (await import("./deno.json", {
   with: { type: "json" },
 })).default;
 
