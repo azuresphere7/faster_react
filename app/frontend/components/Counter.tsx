@@ -10,13 +10,14 @@ Form-submitted data (or JSON POST);
 URL search parameters, such as /pages/myPage?a=1&b=2 will result in {a:1, b:2};
 backend/components manipulations; */
 import { useState } from "react";
+
 export default function Counter() {
   const [state, setState] = useState(0);
   return (
-    <>
-      <div>Counter: {state}</div>
-      <button onClick={() => setState(state + 1)}>Increment</button>
-      <button onClick={() => setState(state - 1)}>Decrement</button>
-    </>
+    <div className="counter">
+      <button onClick={() => setState(state - 1)}>{"-"}</button>
+      <div className="counter-state">{state}</div>
+      <button onClick={() => setState(state + 1)}>{"+"}</button>
+    </div>
   );
 }

@@ -18,10 +18,14 @@ function Page(
   },
 ) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="description"
+          content="A sample project for Faster With React"
+        />
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
         <title>{frameworkProps.title}</title>
       </head>

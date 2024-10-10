@@ -11,53 +11,54 @@ URL search parameters, such as /pages/myPage?a=1&b=2 will result in {a:1, b:2};
 backend/components manipulations; */
 import { Component } from "react";
 import Counter from "./Counter.tsx";
-import { returnHello } from "../files/general.ts";
+import { greet } from "../files/general.ts";
 import { getJSON, route } from "@helpers/frontend/route.ts";
 
 export default class MyIndexPage extends Component {
   override render() {
     return (
-      <>
-        <h1>Route examples</h1>
-        <div>{returnHello()} Joe</div>
-        <div>{(this.props as any).exampleReq}</div>
-        <br />
+      <div className="card-container">
+        <h1>{"Route Examples"}</h1>
+        <p className="greeting">{greet()} {"Dustin!"}</p>
+
+        <div className="action-container">
+          <button
+            onClick={route({
+              path: "/pages/index",
+            })}
+          >
+            {"Navigate to index page"}
+          </button>
+
+          <button
+            onClick={async () => {
+              const res = await getJSON({
+                path: "/example/json",
+                content: {
+                  "test": "testData",
+                },
+              });
+              console.log(res);
+              alert(JSON.stringify(res));
+            }}
+          >
+            {"Get API JSON"}
+          </button>
+        </div>
+
+        <Counter />
+        <div id="myAnotherCounter"></div>
+
         <button
+          className="add-counter-btn"
           onClick={route({
             path: "/components/Counter",
             elSelector: "#myAnotherCounter",
           })}
         >
-          Add another counter
+          {"Add Another Counter"}
         </button>
-        <br />
-        <button
-          onClick={route({
-            path: "/pages/index",
-          })}
-        >
-          Button for a page
-        </button>
-        <br />
-        <button
-          onClick={async () => {
-            const res = await getJSON({
-              path: "/example/json",
-              content: {
-                "test": "testData",
-              },
-            });
-            console.log(res);
-            alert(JSON.stringify(res));
-          }}
-        >
-          get api JSON
-        </button>
-        <br />
-        <div id="myAnotherCounter"></div>
-        <br />
-        <Counter></Counter>
-      </>
+      </div>
     );
   }
 }
