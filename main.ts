@@ -82,11 +82,9 @@ class Builder {
       await this.esbuild.initialize({ worker: false });
       if (this.options.framework.kv.pathOrUrl) {
         await this.initKvFromUrl();
-      } else {
-        if (this.isInDenoDeploy) {
-          const kv = await Deno.openKv();
-          Server.setKv(kv);
-        }
+      } else if (this.isInDenoDeploy) {
+        const kv = await Deno.openKv();
+        Server.setKv(kv);
       }
     } else {
       this.esbuild = await import("esbuild");
@@ -114,7 +112,7 @@ class Builder {
     }
   }
   async initBuilds() {
-    await this.buildfrontendComponents();
+    await this.buildFrontendComponents();
     await this.buildCSS();
   }
   getFixedPath(frameworkFile: string) {
@@ -151,18 +149,17 @@ class Builder {
         return;
       }
       const backendFile = this.backendComponentFile(urlParam);
-      if (this.backendComponents[backendFile]) {
-        if (this.backendComponents[backendFile].before) {
-          if (this.backendComponents[backendFile].before.length > 0) {
-            await this.middlewareHandler(
-              this.backendComponents[backendFile].before,
-              0,
-              ctx,
-            );
-            if (!ctx.extra.finishedFasterReactPageMiddlewares) {
-              return;
-            }
-          }
+      if (this.backendComponents[backendFile]
+        && this.backendComponents[backendFile].before
+        && this.backendComponents[backendFile].before.length > 0
+      ) {
+        await this.middlewareHandler(
+          this.backendComponents[backendFile].before,
+          0,
+          ctx,
+        );
+        if (!ctx.extra.finishedFasterReactPageMiddlewares) {
+          return;
         }
       }
       let props: any = {};
@@ -171,10 +168,8 @@ class Builder {
       } else if (method == "post") {
         props = await this.getPOSTProps(ctx);
       }
-      if (this.backendComponents[backendFile]) {
-        if (this.backendComponents[backendFile].after) {
-          await this.backendComponents[backendFile].after(props);
-        }
+      if (this.backendComponents[backendFile] && this.backendComponents[backendFile].after) {
+        await this.backendComponents[backendFile].after(props);
       }
       if (type == "page") {
         return await getStream(
@@ -216,7 +211,7 @@ class Builder {
     this.server.listen(this.options.serverOptions);
     if (this.options.framework.dev) {
       this.server.acceptOrRejectSocketConn = async (ctx: Context) => {
-        return JSON.stringify(ctx.info.remoteAddr); //return ID
+        return await JSON.stringify(ctx.info.remoteAddr); //return ID
       };
     }
   }
@@ -234,7 +229,7 @@ class Builder {
         await this.buildCSS();
       }
       if (path.includes("/frontend/components") || path.includes("/frontend/files")) {
-        await this.buildfrontendComponents();
+        await this.buildFrontendComponents();
       }
       this.refresh();
     });
@@ -463,7 +458,7 @@ class Builder {
     version += this.options.framework.dev.toString();
     return version;
   }
-  async buildfrontendComponents() {
+  async buildFrontendComponents() {
     try {
       const files: any[] = [];
       const scriptFiles: any[] = [];

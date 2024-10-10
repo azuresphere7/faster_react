@@ -11,7 +11,8 @@ globalThis.startHydrate = function (reactComponent, elSelector, props) {
   globalThis.starDevTools = function () {
     let socket, reconnectionTimerId;
     const requestUrl = globalThis.location.href.replace("http", "ws");
-    function refresh() {
+
+    const refresh = () => {
       clearTimeout(reconnectionTimerId);
       reconnectionTimerId = setTimeout(() => {
         if (socket) {
@@ -20,12 +21,13 @@ globalThis.startHydrate = function (reactComponent, elSelector, props) {
         globalThis.location.reload();
       }, 1000);
     }
-    function connect(forceRefresh) {
+
+    const connect = (forceRefresh) => {
       if (socket) {
         socket.close();
       }
       socket = new WebSocket(requestUrl);
-      socket.addEventListener("open", (event) => {
+      socket.addEventListener("open", () => {
         if (forceRefresh) {
           refresh();
         }
