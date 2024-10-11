@@ -109,7 +109,7 @@ defining API routes in the backend.
 - The **Middleware Design Pattern** offers a practical and straightforward
   method for defining API routes.
 
-![Architecture Diagram](./docs/graph.svg)
+![Architecture Diagram](./docs/architecture.png)
 
 ---
 

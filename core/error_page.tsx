@@ -11,14 +11,14 @@ export default class FrameworkErrorPage
   override render() {
     return (
       <>
-        <h1>Error</h1>
+        <h1>{"Error"}</h1>
         <ul>
           <li>
-            <strong>Error:</strong>
+            <strong>{"Error:"}</strong>
             {this.props.msg}
           </li>
           <li>
-            <strong>Stack:</strong>
+            <strong>{"Stack:"}</strong>
             {this.props.stack}
           </li>
         </ul>
